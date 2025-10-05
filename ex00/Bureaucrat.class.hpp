@@ -20,18 +20,68 @@
 //# define COLORBureaucrat		"\033[38;5;143m"         //DARK_YELLOW
 # include <iostream>
 # include <string>
+# include <sstream>
 
 class Bureaucrat {
 	private:
+		static const std::size_t _highest = 1 ;
+		static const std::size_t _lowest = 150 ;		
 		// Private member functions
-		str::string name;
-		std::size_t range;
+		const std::string _name ;
+		std::size_t _grade ;
+
+		// exceptions
+		class GradeException : public std::exception {
+			public:
+				GradeException( const std::string & adjective,
+					std::size_t limit ) : 
+					_adjective(adjective), 
+					_limit(limit) {
+					std::stringstream ss ;
+					ss << _adjective << " grade is Grade=" << _limit << "." ;
+					_msg = ss.str() ; 
+					}
+
+
+				virtual ~GradeException( void ) throw () {}
+				GradeException ( const GradeException & other) :
+					_adjective(other._adjective), 
+					_limit(other._limit), 
+					_msg(other._msg) {}
+
+				virtual const char * what() const throw () {
+					return _msg.c_str(); 
+				} 
+
+
+			private:
+				const std::size_t _limit ;
+				const std::string _adjective ;
+				std::string _msg ;
+				GradeException & operator=(const GradeException & other) 
+				{
+					if (this != & other)
+					{ 
+						_limit = other._limit ;
+						_adjective = other._adjective ;
+						_msg = other._msg ;
+
+					}
+					return *this ;
+				}				
+
+		} ;
+
+		class GradeTooLowException : public std::exception {
+
+		} ;
 	protected:
 		// Protectd member functions
 	public:
+
 		// Canonical form 
 		Bureaucrat( void ); //constructor by default
-		Bureaucrat(const Bureaucrat& other); //constructor by copy
+		Bureaucrat(const Bureaucrat & other); //constructor by copy
 		Bureaucrat & operator=(const Bureaucrat & other);
 		~Bureaucrat( void ); // destructor
 
@@ -39,12 +89,18 @@ class Bureaucrat {
 		//Bureaucrat(${ARGS_LIST});
 
 		// Getters
+		const std::string getName() const ;
+		std::size_t getGrade() const ;
 
 		// Setters
+		void setName(const std::string & thename) ;
+		void setGrade(const std::size_t & thegrade) ;
 
 		// Oveloading of comparison operators
 
 		// Public member functions
+		void upGrade() ;
+		void downGrade()
 
 		// Helper functions for canonicalization
 		std::string canonizeme( void ) const;
