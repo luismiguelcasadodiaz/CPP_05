@@ -24,60 +24,80 @@
 
 class Bureaucrat {
 	private:
-		static const std::size_t _highest = 1 ;
-		static const std::size_t _lowest = 150 ;		
+		static const int _highest = 1 ;
+		static const int _lowest = 150 ;		
 		// Private member functions
 		const std::string _name ;
-		std::size_t _grade ;
+		int _grade ;
 
+	protected:
+		// Protectd member functions
+	public:
 		// exceptions
 		class GradeException : public std::exception {
 			public:
 				GradeException( const std::string & adjective,
 					std::size_t limit ) : 
 					_adjective(adjective), 
-					_limit(limit) {
+					_limit(limit),
+					_msg() {
 					std::stringstream ss ;
 					ss << _adjective << " grade is Grade=" << _limit << "." ;
 					_msg = ss.str() ; 
 					}
 
-
 				virtual ~GradeException( void ) throw () {}
-				GradeException ( const GradeException & other) :
-					_adjective(other._adjective), 
-					_limit(other._limit), 
-					_msg(other._msg) {}
 
 				virtual const char * what() const throw () {
 					return _msg.c_str(); 
 				} 
-
-
+			protected:
+				GradeException ( const GradeException & other):
+					_adjective(other._adjective), 
+					_limit(other._limit),
+					_msg()
+				{
+					std::stringstream ss ;
+					ss << _adjective << " grade is Grade=" << _limit << "." ;
+					_msg = ss.str() ; 
+				}
+				GradeException & operator=(const GradeException & other) ;
 			private:
-				const std::size_t _limit ;
 				const std::string _adjective ;
+				const std::size_t _limit ;
 				std::string _msg ;
-				GradeException & operator=(const GradeException & other) 
+				GradeException( void ):_adjective(""), _limit(0) {} //Default constructor
+
+		} ;
+
+		class GradeTooHighException : public GradeException
+		{
+			public: 
+				GradeTooHighException() : GradeException("Maximun", 1) {};
+				GradeTooHighException(const GradeTooHighException & other):
+					GradeException( other ) {};
+				GradeTooHighException & operator=(const GradeTooHighException& other)
 				{
 					if (this != & other)
-					{ 
-						_limit = other._limit ;
-						_adjective = other._adjective ;
-						_msg = other._msg ;
-
-					}
+						GradeException::operator=(other);
 					return *this ;
-				}				
-
+				};
+				virtual ~GradeTooHighException( void ) throw() {} ;
 		} ;
-
-		class GradeTooLowException : public std::exception {
-
+		class GradeTooLowException : public GradeException
+		{
+			public:
+				GradeTooLowException() : GradeException("Minimun", 150) {}
+				GradeTooLowException(const GradeTooLowException & other):
+					GradeException( other ) {};
+				GradeTooLowException & operator=(const GradeTooLowException& other)
+				{
+					if (this != & other)
+						GradeException::operator=(other);
+					return *this ;
+				};
+				virtual ~GradeTooLowException( void ) throw() {} ;
 		} ;
-	protected:
-		// Protectd member functions
-	public:
 
 		// Canonical form 
 		Bureaucrat( void ); //constructor by default
@@ -86,21 +106,20 @@ class Bureaucrat {
 		~Bureaucrat( void ); // destructor
 
 		// Constructor(s)
-		//Bureaucrat(${ARGS_LIST});
+		Bureaucrat( const std::string & thename, const int thegrade ) ;
 
 		// Getters
 		const std::string getName() const ;
-		std::size_t getGrade() const ;
+		int getGrade() const ;
 
 		// Setters
-		void setName(const std::string & thename) ;
-		void setGrade(const std::size_t & thegrade) ;
+		void setGrade(const int & thegrade) ;
 
 		// Oveloading of comparison operators
 
 		// Public member functions
 		void upGrade() ;
-		void downGrade()
+		void downGrade();
 
 		// Helper functions for canonicalization
 		std::string canonizeme( void ) const;

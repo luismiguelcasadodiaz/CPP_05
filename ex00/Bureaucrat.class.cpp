@@ -3,18 +3,15 @@
 //
 // ::::::::::::::::::::::::::::Canonical form::::::::::::::::::::::::::::::::
 //
-Bureaucrat::Bureaucrat( void ) //constructor by default
+Bureaucrat::Bureaucrat( void ): _name( "noname" ), _grade( 150 ) //constructor by default
 {
-	std::cout << "Default constructor called for Bureaucrat " << std::endl;
 	std::cout << COLORBureaucrat << "Bureaucrat default constructor called." << RESETBureaucrat << std::endl;
-	thisreturn ;
 }
 
-Bureaucrat::Bureaucrat(const Bureaucrat& other) //constructor by copy
+Bureaucrat::Bureaucrat(const Bureaucrat& other)://constructor by copy
+	_name(other._name) , _grade(other._grade)
 {
 	std::cout << COLORBureaucrat << "Bureaucrat copy constructor called." << RESETBureaucrat << std::endl;
-	*this = other;
-	return;
 }
 
 Bureaucrat &  Bureaucrat::operator=(const Bureaucrat & other)
@@ -22,7 +19,7 @@ Bureaucrat &  Bureaucrat::operator=(const Bureaucrat & other)
 	std::cout << COLORBureaucrat << "Bureaucrat copy assignment operator called." << RESETBureaucrat <<std::endl;
 	if (this != &other)
 	{
-		*this = other;
+		this->_grade = other._grade;
 	}
 	return *this; 
 }
@@ -34,36 +31,49 @@ Bureaucrat::~Bureaucrat( void ) // destructor
 }
 
 // Constructor(s)
-//Bureaucrat::Bureaucrat(${ARGS_LIST});
+Bureaucrat::Bureaucrat( const std::string & thename, int thegrade ): 
+	_name(thename), _grade(thegrade) //constructor by default
+{
+	std::cout << COLORBureaucrat << "Bureaucrat list constructor called." << RESETBureaucrat << std::endl;
+	if ( _grade < Bureaucrat::_highest ) {throw Bureaucrat::GradeTooHighException() ; }
+	else if ( Bureaucrat::_lowest < _grade ){ throw Bureaucrat::GradeTooLowException() ; }
+}
 
 // Getters
 const std::string Bureaucrat::getName() const {
 	return this->_name ;
 }
 
-std::size_t Bureaucrat::getGrade() const {
+int Bureaucrat::getGrade() const {
 	return this->_grade ;
 }
 
 // Setters
 
-void Bureaucrat::setName(const std::string & thename) {
-	this->_name = thename ;
-}
 
-void Bureaucrat::setGrade(const std::size_t & thegrade) {
-	if ( (_highest <= thegrade) && (thegrade <=  _highest) )
+void Bureaucrat::setGrade(const int & thegrade) {
+	if ( (_highest <= thegrade) && (thegrade <=  _lowest) )
 	{
 		this->_grade = thegrade ;
+		return ;
 	}
-	else 
+	if (thegrade < _highest) {throw GradeTooHighException() ; }
+	else { throw GradeTooLowException() ; }
 }
 // Comparison operators
 
 // public member functions
 
-void upGrade() {
-	
+void Bureaucrat::upGrade() {
+	if (Bureaucrat::_highest < _grade )
+	{ _grade -= 1 ; }
+	else { throw GradeTooHighException() ;}	
+}
+
+void Bureaucrat::downGrade(){
+	if ( _grade < Bureaucrat::_lowest )
+	{ _grade += 1 ; }
+	else { throw GradeTooLowException() ;}	
 }
 
 // protected  member functions
@@ -72,8 +82,9 @@ void upGrade() {
 
 // Helper functions for canonicalization
 std::string Bureaucrat::canonizeme( void ) const {
-	std::string _str_ = 
-	return (_str_);
+	std::stringstream  _str_ ;
+	_str_ << _name << ", Bureaucrat with grade " << _grade << "." ;
+	return _str_.str();
 }
 
 
