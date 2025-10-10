@@ -1,5 +1,5 @@
 #ifndef FORM_HH
-#define FOMR_HH
+#define FORM_HH
 #include "Bureaucrat.class.hpp"
 #include <ostream>
 
@@ -44,6 +44,7 @@ class Form
 			private:
 				const std::string _adjective ;
 				const int _limit ;
+				std::string _text ;
 			protected:
 				GradeException (const GradeException & other ) ;
 				GradeException & operator=( const GradeException & other) ;

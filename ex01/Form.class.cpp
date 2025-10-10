@@ -65,18 +65,25 @@ bool Form::isSigned( void ) const
 	return this->_signed ;
 }
 
+std:ostream & operator<<(std::os
 Form::GradeException::GradeException( void ) : 
-	_adjective( "" ), _limit( 0 ) 
+	_adjective( "" ), _limit( 0 ), _text() 
 {
 	std::cout << COLORFormGradeE << "Form::GradeException default  constructor called." << RESETForm << std::endl;
+	std::stringstream ss;
+	ss << this->_adjective << " Form grade is Grade= " << this->_limit << "." ;
+	this->_text = ss.str() ;
 }
 Form::GradeException::GradeException( const std::string & adj, const int lim ) : 
-	_adjective( adj ), _limit( lim ) 
+	_adjective( adj ), _limit( lim ), _text() 
 {
 	std::cout << COLORFormGradeE << "Form::GradeException list  constructor called." << RESETForm << std::endl;
+	std::stringstream ss;
+	ss << this->_adjective << " Form grade is Grade= " << this->_limit << "." ;
+	this->_text = ss.str() ;
 }
 Form::GradeException::GradeException( const GradeException & other ) :
-	_adjective(other._adjective), _limit( other._limit)
+	_adjective(other._adjective), _limit( other._limit), _text( other._text)
 {
 	std::cout << COLORFormGradeE << "Form::GradeException copy constructor called." << RESETForm << std::endl;
 }
@@ -92,9 +99,7 @@ Form::GradeException::~GradeException ( void ) throw ()
 }
 const char * Form::GradeException::what() const throw ()
 {
-	std::stringstream ss;
-	ss << this->_adjective << " Form grade is Grade= " << this->_limit << "." ;
-	return ss.str().c_str();
+	return this->_text.c_str();
 }
 
 
