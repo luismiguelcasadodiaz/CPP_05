@@ -1,4 +1,4 @@
-#include "Form.class.hpp"
+#include "Form.hpp"
 
 Form::Form ( void ) : _name( "no name" ), _e_grade( 0 ), _s_grade( 0 )
 {
@@ -13,11 +13,12 @@ Form::~Form ( void )
 Form::Form( const Form & other ) :
 	_name( other._name), 
 	_e_grade( other._e_grade ),
-	_s_grade(other._s_grade ),
+	_s_grade( other._s_grade ),
 	_signed( other._signed )
 
 {
 	std::cout << COLORForm << "Form copy constructor called." << RESETForm << std::endl;
+	
 }
 Form & Form::operator=( const Form & other )
 {
@@ -37,12 +38,17 @@ Form::Form (const std::string & thename, const int & e, const int & s) :
 			_signed( false )
 {
 	std::cout << COLORForm << "Form list  constructor called." << RESETForm << std::endl;
+	if ( ( _e_grade < Form::_highest ) || ( _s_grade < Form::_highest ) )
+	{throw Form::GradeTooHighException() ;}
+	else if ( ( Form::_lowest < _e_grade ) || ( Form::_lowest < _s_grade ) )
+	{throw Form::GradeTooLowException() ;}
 }
 void Form::beSigned( const Bureaucrat & b )
 {
+	if (this->_signed)
+	{ return ; }
 	if (this->_s_grade < b.getGrade() )
 	{
-		this->_signed = true ;
 		throw( Form::GradeTooLowException() );
 	}
 	this->_signed = true ;
@@ -64,12 +70,22 @@ bool Form::isSigned( void ) const
 {
 	return this->_signed ;
 }
-
-std:ostream & operator<<(std::os
+const std::string Form::canonizeme( void ) const
+{
+	std::stringstream _str_ ;
+	_str_ << "Form " << _name << "[exec=" << _e_grade << ", sign="<< _s_grade <<"] is " ;
+	if ( _signed ){ _str_ << "SIGNED." ;} else { _str_ << "NOT SIGNED." ;}
+	return _str_.str() ;
+	
+}
+std::ostream & operator<<(std::ostream & os, const Form & obj)
+{
+	os << COLORForm << obj.canonizeme()  << RESETForm << std::endl;
+	return os ;
+}
 Form::GradeException::GradeException( void ) : 
 	_adjective( "" ), _limit( 0 ), _text() 
 {
-	std::cout << COLORFormGradeE << "Form::GradeException default  constructor called." << RESETForm << std::endl;
 	std::stringstream ss;
 	ss << this->_adjective << " Form grade is Grade= " << this->_limit << "." ;
 	this->_text = ss.str() ;

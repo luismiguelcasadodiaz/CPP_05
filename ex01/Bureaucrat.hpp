@@ -2,9 +2,9 @@
 # define Bureaucrat_H
 
 # define RESETBureaucrat  	"\033[0;39m"
-//# define COLORBureaucrat		"\033[0;90m"             //GRAY
-# define COLORBureaucrat		"\033[0;91m"             //RED
-//# define COLORBureaucrat		"\033[0;92m"             //GREEN
+# define COLORBureaucratGradeE		"\033[0;90m"             //GRAY
+//# define COLORBureaucrat		"\033[0;91m"             //RED
+# define COLORBureaucrat		"\033[0;92m"             //GREEN
 //# define COLORBureaucrat		"\033[38;2;75;179;82m"   //GREEN
 //# define COLORBureaucrat		"\033[0;93m"             //YELLOW
 //# define COLORBureaucrat		"\033[0;94m"             //BLUE
@@ -14,14 +14,14 @@
 //# define COLORBureaucrat		"\033[0;99m"             //BLACK
 //# define COLORBureaucrat		"\033[38;5;209m"         //ORANGE
 //# define COLORBureaucrat		"\033[38;2;184;143;29m"  //BROWN
-//# define COLORBureaucrat		"\033[38;5;234m"         //DARK_GRAY
-//# define COLORBureaucrat		"\033[38;5;245m"         //MID_GRAY
+# define COLORBureaucratGradeETH		"\033[38;5;234m"         //DARK_GRAY
+# define COLORBureaucratGradeETL		"\033[38;5;245m"         //MID_GRAY
 //# define COLORBureaucrat		"\033[38;2;75;179;82m"   //DARK_GREEN
 //# define COLORBureaucrat		"\033[38;5;143m"         //DARK_YELLOW
 # include <iostream>
 # include <string>
 # include <sstream>
-
+class Form ; // Forward declaration
 class Bureaucrat {
 	private:
 		static const int _highest = 1 ;
@@ -37,66 +37,38 @@ class Bureaucrat {
 		class GradeException : public std::exception {
 			public:
 				GradeException( const std::string & adjective,
-					std::size_t limit ) : 
-					_adjective(adjective), 
-					_limit(limit),
-					_msg() {
-					std::stringstream ss ;
-					ss << _adjective << " grade is Grade=" << _limit << "." ;
-					_msg = ss.str() ; 
-					}
+					            std::size_t limit ) ;
 
-				virtual ~GradeException( void ) throw () {}
+				virtual ~GradeException( void ) throw () ;
 
-				virtual const char * what() const throw () {
-					return _msg.c_str(); 
-				} 
+				virtual const char * what() const throw () ;
 			protected:
-				GradeException ( const GradeException & other):
-					_adjective(other._adjective), 
-					_limit(other._limit),
-					_msg()
-				{
-					std::stringstream ss ;
-					ss << _adjective << " grade is Grade=" << _limit << "." ;
-					_msg = ss.str() ; 
-				}
+				GradeException ( const GradeException & other) ;
 				GradeException & operator=(const GradeException & other) ;
 			private:
 				const std::string _adjective ;
 				const std::size_t _limit ;
 				std::string _msg ;
-				GradeException( void ):_adjective(""), _limit(0) {} //Default constructor
-
+				GradeException( void ) ;
 		} ;
 
 		class GradeTooHighException : public GradeException
 		{
 			public: 
-				GradeTooHighException() : GradeException("Maximun", 1) {};
-				GradeTooHighException(const GradeTooHighException & other):
-					GradeException( other ) {};
-				GradeTooHighException & operator=(const GradeTooHighException& other)
-				{
-					if (this != & other)
-						GradeException::operator=(other);
-					return *this ;
-				};
-				virtual ~GradeTooHighException( void ) throw() {} ;
+				GradeTooHighException();
+				GradeTooHighException(const GradeTooHighException & other); 
+				GradeTooHighException & operator=(
+					const GradeTooHighException& other);
+				virtual ~GradeTooHighException( void ) throw();
 		} ;
 		class GradeTooLowException : public GradeException
 		{
 			public:
-				GradeTooLowException() : GradeException("Minimun", 150) {}
-				GradeTooLowException(const GradeTooLowException & other):
-					GradeException( other ) {};
-				GradeTooLowException & operator=(const GradeTooLowException& other)
-				{
-					if (this != & other)
-						GradeException::operator=(other);
-					return *this ;
-				};
-				virtual ~GradeTooLowException( void ) throw() {} ;
+				GradeTooLowException() ;
+				GradeTooLowException(const GradeTooLowException & other);
+				GradeTooLowException & operator=(
+					const GradeTooLowException& other);
+				virtual ~GradeTooLowException( void ) throw();
 		} ;
 
 		// Canonical form 
@@ -120,6 +92,7 @@ class Bureaucrat {
 		// Public member functions
 		void upGrade() ;
 		void downGrade();
+		void signForm( Form & f );
 
 		// Helper functions for canonicalization
 		std::string canonizeme( void ) const;

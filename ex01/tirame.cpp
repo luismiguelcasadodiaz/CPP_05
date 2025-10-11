@@ -1,4 +1,5 @@
-#include "Bureaucrat.class.hpp"
+#include "Bureaucrat.hpp"
+#include "Form.hpp"
 
 //
 // ::::::::::::::::::::::::::::Canonical form::::::::::::::::::::::::::::::::
@@ -76,6 +77,29 @@ void Bureaucrat::downGrade(){
 	else { throw GradeTooLowException() ;}	
 }
 
+void Bureaucrat::signForm( Form & f)
+{
+	if ( f.isSigned() )
+	{
+		std::cout << this->_name << " couldn't sign " << f.getName() ;
+		std::cout << "Because it is already signed." <<std::endl ;
+		return ;
+	}
+	int form_grade = f.getSignGrade() ;
+	int bure_grade = this->getGrade() ;
+	if ( form_grade < bure_grade )
+	{
+		std::cout << this->_name << " couldn't sign " << f.getName() ;
+		std::cout << "Because my grade " << bure_grade << "can not sign " ;
+		std::cout << "forms of grade " << form_grade << "." <<std::endl ;
+		return ;
+	}
+	f.beSigned( *this ) ;
+	if ( f.isSigned() )
+	{
+		std::cout << this->_name << " signed " << f.getName() << "." <<std::endl ;
+	}
+}
 // protected  member functions
 
 // private member funcions

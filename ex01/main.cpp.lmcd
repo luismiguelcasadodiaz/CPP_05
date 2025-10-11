@@ -1,0 +1,19 @@
+#include "Bureaucrat.hpp"
+#include "Form.hpp"
+#include <iostream>
+#include <string>
+#include <stdexcept>
+
+
+int main(void)
+{
+	{
+		Bureaucrat b001("Alice", 1) ;
+		Bureaucrat b025("Alice 025", 25) ;
+		Form f023("Form 023", 23, 23) ; 
+		Form f026("Form 026", 26, 26) ; 
+		b025.signForm(f023);
+		b025.signForm(f026);
+	}
+return 0;
+}

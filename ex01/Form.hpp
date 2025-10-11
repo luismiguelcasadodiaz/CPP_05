@@ -1,29 +1,31 @@
 #ifndef FORM_HH
 #define FORM_HH
-#include "Bureaucrat.class.hpp"
+#include "Bureaucrat.hpp"
 #include <ostream>
 
 # define RESETForm  	"\033[0;39m"
-//# define COLORForm		"\033[0;90m"             //GRAY
+# define COLORFormGradeE		"\033[0;90m"             //GRAY
 //# define COLORForm		"\033[0;91m"             //RED
-# define COLORForm		"\033[0;92m"             //GREEN
+//# define COLORForm		"\033[0;92m"             //GREEN
 //# define COLORForm		"\033[38;2;75;179;82m"   //GREEN
 //# define COLORForm		"\033[0;93m"             //YELLOW
-//# define COLORForm		"\033[0;94m"             //BLUE
-# define COLORFormGradeTHE		"\033[0;95m"             //MAGENTA
-# define COLORFormGradeTLE		"\033[0;96m"             //CYAN
+# define COLORForm		"\033[0;94m"             //BLUE
+//# define COLORForm		"\033[0;95m"             //MAGENTA
+//# define COLORForm		"\033[0;96m"             //CYAN
 //# define COLORForm		"\033[0;97m"             //WHITE
 //# define COLORForm		"\033[0;99m"             //BLACK
 //# define COLORForm		"\033[38;5;209m"         //ORANGE
-# define COLORFormGradeE		"\033[38;2;184;143;29m"  //BROWN
-//# define COLORForm		"\033[38;5;234m"         //DARK_GRAY
-//# define COLORForm		"\033[38;5;245m"         //MID_GRAY
+//# define COLORForm		"\033[38;2;184;143;29m"  //BROWN
+# define COLORFormGradeTHE		"\033[38;5;234m"         //DARK_GRAY
+# define COLORFormGradeTLE		"\033[38;5;245m"         //MID_GRAY
 //# define COLORForm		"\033[38;2;75;179;82m"   //DARK_GREEN
 //# define COLORForm		"\033[38;5;143m"         //DARK_YELLOW
 
 class Form
 {
 	private:
+		static const int _highest = 1 ;
+		static const int _lowest = 150 ;		
 		const std::string _name ;
 		const int _e_grade ;
 		const int _s_grade ;
@@ -37,8 +39,8 @@ class Form
 		Form & operator=( const Form & other ) ;
 
 		Form (const std::string & thename, const int & e, const int & s) ;
-		void beSigned(const Bureaucrat & b );
-		std::string canonizeme ( void ) const ;
+		void beSigned( const Bureaucrat & b );
+		const std::string canonizeme ( void ) const ;
 		class GradeException :public std::exception
 		{
 			private:

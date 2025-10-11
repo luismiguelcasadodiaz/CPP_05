@@ -1,5 +1,5 @@
-#include "Bureaucrat.class.hpp"
-#include "Form.class.hpp"
+#include "Bureaucrat.hpp"
+#include "Form.hpp"
 #include <iostream>
 #include <string>
 #include <stdexcept>
