@@ -1,4 +1,4 @@
-#include "Bureaucrat.class.hpp"
+#include "Bureaucrat.hpp"
 
 
 
@@ -43,6 +43,8 @@ void testConstructorGradeTooHigh() {
         std::cout << "✗ Should have thrown exception" << std::endl;
     } catch (Bureaucrat::GradeTooHighException& e) {
         std::cout << "✓ Caught expected exception: " << e.what() << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "✗ Caught wrong exception: " << e.what() << std::endl;
     }
 }
 
@@ -54,6 +56,8 @@ void testConstructorGradeTooLow() {
         std::cout << "✗ Should have thrown exception but created: " << b << std::endl;
     } catch (Bureaucrat::GradeTooLowException& e) {
         std::cout << "✓ Caught expected exception: " << e.what() << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "✗ Caught wrong exception: " << e.what() << std::endl;
     }
     
     try {
@@ -61,6 +65,8 @@ void testConstructorGradeTooLow() {
         std::cout << "✗ Should have thrown exception" << std::endl;
     } catch (Bureaucrat::GradeTooLowException& e) {
         std::cout << "✓ Caught expected exception: " << e.what() << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "✗ Caught wrong exception: " << e.what() << std::endl;
     }
 }
 
