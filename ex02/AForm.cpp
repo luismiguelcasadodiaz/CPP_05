@@ -51,9 +51,13 @@ void AForm::beSigned( const Bureaucrat & b )
 {
 	if (this->_signed)
 	{ return ; }
-	if (this->_s_grade < b.getGrade() )
+	int b_grade = b.getGrade() ;
+	if (this->_s_grade < b_grade )
 	{
-		throw( AForm::GradeTooLowException() );
+		throw( AForm::signGradeTooLowException(_name,
+										"Target",
+										_s_grade,
+										b_grade) );
 	}
 	this->_signed = true ;
 }
@@ -91,6 +95,94 @@ std::ostream & operator<<(std::ostream & os, const AForm & obj)
 	os << COLORForm << obj.canonizeme()  << RESETForm << std::endl;
 	return os ;
 }
+
+
+// Exception FormOperException
+
+AForm::FormOperException::FormOperException ( void ) :
+	_formName("No name"), _action("No action"), _minGrade(0), _curGrade(0)
+{
+	std::cout << COLORFormGradeEXEC << "AForm::FormOperException default constructor called." << RESETForm << std::endl;
+}
+AForm::FormOperException::~FormOperException ( void ) throw()
+{
+	std::cout << COLORFormGradeEXEC << "AForm::FormOperException default destructor called." << RESETForm << std::endl;
+}
+AForm::FormOperException::FormOperException (
+		const std::string & name,
+		const std::string & target,
+		const std::string & action,
+		int required_g,
+		int actual_g):
+	_formName(name), _target(target),_action(action), 
+	_minGrade(required_g), _curGrade(actual_g)
+{
+	std::cout << COLORFormGradeEXEC << "AForm::FormOperException list constructor called." << RESETForm << std::endl;
+	std::stringstream ss ;
+	ss << _formName << " for "  << _target ;
+	ss << " requires a minimun grade of " << _minGrade << " for " << _action ;
+	ss << ", but bureaucrat has only grade " << _curGrade << "."  << std::endl ;
+	_msg = ss.str();
+}
+AForm::FormOperException::FormOperException ( const FormOperException & other ) :
+	_formName(other._formName), _target(other._target),_action(other._action),
+	_minGrade(other._minGrade), _curGrade(other._curGrade), _msg(other._msg)
+{
+	std::cout << COLORFormGradeEXEC << "AForm::FormOperException copy constructor called." << RESETForm << std::endl;
+}
+AForm::FormOperException & AForm::FormOperException::operator= ( const FormOperException & other ) 
+{
+	std::cout << COLORFormGradeEXEC << "AForm::FormOperException Assingnation constructor called." << RESETForm << std::endl;
+	if (this != &other)
+	{
+		this->_formName = other._formName;
+		this->_target = other._target ;
+		this->_action = other._action ;
+		this->_minGrade = other._minGrade ;
+		this->_curGrade = other._curGrade ;
+		this->_msg = other._msg ;
+	}
+	return *this;
+}
+const char * AForm::FormOperException::what() const throw()
+{
+	return this->_msg.c_str();
+}
+
+// Exception execGradeTooLowException
+
+AForm::execGradeTooLowException::execGradeTooLowException (
+		const std::string & formName,
+		const std::string & formTarget,
+		int required_g,
+		int actual_g ) : 
+	FormOperException(formName, formTarget, "Execution", required_g, actual_g)
+{
+	std::cout << COLORFormGradeEXEC << "AForm::execGradeTooLowException default  constructor called." << RESETForm << std::endl;
+}
+AForm::execGradeTooLowException::~execGradeTooLowException ( void ) throw ()
+{
+	std::cout << COLORFormGradeEXEC << "AForm::execGradeTooLowException default  destructor called." << RESETForm << std::endl;
+}
+
+// Exception signGradeTooLowException
+
+AForm::signGradeTooLowException::signGradeTooLowException (
+		const std::string & formName,
+		const std::string & formTarget,
+		int required_g,
+		int actual_g ) : 
+	FormOperException(formName, formTarget, "signature", required_g, actual_g)
+{
+	std::cout << COLORFormGradeEXEC << "AForm::signGradeTooLowException default  constructor called." << RESETForm << std::endl;
+}
+AForm::signGradeTooLowException::~signGradeTooLowException ( void ) throw()
+{
+	std::cout << COLORFormGradeEXEC << "AForm::signGradeTooLowException default  destructor called." << RESETForm << std::endl;
+}
+
+
+// Base exception ab out form grde limits
 AForm::GradeException::GradeException( void ) : 
 	_adjective( "" ), _limit( 0 ), _text() 
 {

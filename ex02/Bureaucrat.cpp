@@ -82,22 +82,25 @@ void Bureaucrat::signForm( AForm & f)
 	if ( f.isSigned() )
 	{
 		std::cout << this->_name << " couldn't sign " << f.getName() ;
-		std::cout << " Because it is already signed." <<std::endl ;
+		//std::cout << " for target " << f.getTarget() << "." ;
+		std::cout << " It is already signed." << std::endl ;
 		return ;
 	}
 	int form_grade = f.getSignGrade() ;
 	int bure_grade = this->getGrade() ;
 	if ( form_grade < bure_grade )
-	{
+	{ 
 		std::cout << this->_name << " couldn't sign " << f.getName() ;
-		std::cout << " Because my grade " << bure_grade << " can not sign " ;
-		std::cout << "forms of grade " << form_grade << "." <<std::endl ;
+		//std::cout << " for target " << f.getTarget() << "." ;
+		std::cout << " My grade " << bure_grade << " can not sign " ;
+		std::cout << "forms of grade " << form_grade << "." << std::endl ;
 		return ;
 	}
 	f.beSigned( *this ) ;
 	if ( f.isSigned() )
 	{
-		std::cout << this->_name << " signed " << f.getName() << "." <<std::endl ;
+		std::cout << this->_name << " signed " << f.getName() << "." << std::endl;
+		//std::cout << " for target " << f.getTarget() << "." <<std::endl ;
 	}
 }
 void Bureaucrat::executeForm( AForm & f)
@@ -105,16 +108,23 @@ void Bureaucrat::executeForm( AForm & f)
 	if ( !f.isSigned() )
 	{
 		std::cout << this->_name << " couldn't execute " << f.getName() ;
-		std::cout << "Because it is not signed." <<std::endl ;
+		//std::cout << " for target " << f.getTarget() << "." ;
+		std::cout << "Because it is not signed." << std::endl ;
 		this->signForm( f ) ;
 	}
 	int form_grade = f.getExecGrade() ;
 	int bure_grade = this->getGrade() ;
 	if ( form_grade < bure_grade )
-	{
-		std::cout << this->_name << " couldn't execute " << f.getName() ;
+	{ 
+		throw (AForm::execGradeTooLowException(
+			f.getName(),
+			"Target",
+			form_grade,
+			bure_grade));
+	std::cout << this->_name << " couldn't execute " << f.getName() ;
+		//std::cout << " for target " << f.getTarget() << "." ;
 		std::cout << "Because my grade " << bure_grade << "can not sign " ;
-		std::cout << "forms of grade " << form_grade << "." <<std::endl ;
+		std::cout << "forms of grade " << form_grade << "." << std::endl ;
 		return ;
 	}
 	f.execute( *this ) ;

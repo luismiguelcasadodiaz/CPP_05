@@ -6,7 +6,7 @@
 #    By: luicasad <luicasad@student.42barcel>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/30 13:07:33 by luicasad          #+#    #+#              #
-#    Updated: 2025/10/12 09:16:06 by luicasad         ###   ########.fr        #
+#    Updated: 2025/10/12 20:50:26 by luicasad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,12 +51,14 @@ LFLGS 			= #-fsanitize=address
 
 HEADERS		=	Bureaucrat.hpp \
 				AForm.hpp \
-				PresidentialPardonForm.hpp
+				PresidentialPardonForm.hpp \
+				RobotomyRequestForm.hpp
 
 SRCS_TARGET	= 	main.cpp \
 			Bureaucrat.cpp \
 			AForm.cpp \
-			PresidentialPardonForm.cpp
+			PresidentialPardonForm.cpp \
+			RobotomyRequestForm.cpp
 
 
 FILE_TARGET = $(addprefix $(SRCDIR_TARGET), $(SRCS_TARGET))

@@ -40,5 +40,5 @@ set detach-on-fork off
 ######################  Breaks FT_IRC  ######################################
 
 
-break main.cpp:32
+break main.cpp:18
 run
