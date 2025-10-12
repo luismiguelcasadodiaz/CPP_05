@@ -1,28 +1,32 @@
-#include "Form.hpp"
+#include "AForm.hpp"
 
-Form::Form ( void ) : _name( "no name" ), _e_grade( 0 ), _s_grade( 0 )
+AForm::AForm ( void ) : 
+	_name( "no name" ), 
+	_e_grade( 0 ), 
+	_s_grade( 0 ), 
+	_signed(false)
 {
-	std::cout << COLORForm << "Form default constructor called." << RESETForm << std::endl;
+	std::cout << COLORForm << "AForm default constructor called." << RESETForm << std::endl;
 }
 
-Form::~Form ( void )
+AForm::~AForm ( void )
 {
-	std::cout << COLORForm << "Form default destructo called." << RESETForm << std::endl;
+	std::cout << COLORForm << "AForm default destructor called." << RESETForm << std::endl;
 }
 
-Form::Form( const Form & other ) :
+AForm::AForm( const AForm & other ) :
 	_name( other._name), 
 	_e_grade( other._e_grade ),
 	_s_grade( other._s_grade ),
 	_signed( other._signed )
 
 {
-	std::cout << COLORForm << "Form copy constructor called." << RESETForm << std::endl;
+	std::cout << COLORForm << "AForm copy constructor called." << RESETForm << std::endl;
 	
 }
-Form & Form::operator=( const Form & other )
+AForm & AForm::operator=( const AForm & other )
 {
-	std::cout << COLORForm << "Form assignation constructor called." << RESETForm << std::endl;
+	std::cout << COLORForm << "AForm assignation constructor called." << RESETForm << std::endl;
 	if ( this != &other )
 	{
 		//this->_e_grade = other._e_grade ; 
@@ -31,89 +35,93 @@ Form & Form::operator=( const Form & other )
 	}
 	return *this;
 }
-Form::Form (const std::string & thename, const int & e, const int & s) :
+AForm::AForm (const std::string & thename, const int & e, const int & s) :
 			_name( thename ),
 			_e_grade( e ), 
 			_s_grade( s ),
 			_signed( false )
 {
-	std::cout << COLORForm << "Form list  constructor called." << RESETForm << std::endl;
-	if ( ( _e_grade < Form::_highest ) || ( _s_grade < Form::_highest ) )
-	{throw Form::GradeTooHighException() ;}
-	else if ( ( Form::_lowest < _e_grade ) || ( Form::_lowest < _s_grade ) )
-	{throw Form::GradeTooLowException() ;}
+	std::cout << COLORForm << "AForm list  constructor called." << RESETForm << std::endl;
+	if ( ( _e_grade < AForm::_highest ) || ( _s_grade < AForm::_highest ) )
+	{throw AForm::GradeTooHighException() ;}
+	else if ( ( AForm::_lowest < _e_grade ) || ( AForm::_lowest < _s_grade ) )
+	{throw AForm::GradeTooLowException() ;}
 }
-void Form::beSigned( const Bureaucrat & b )
+void AForm::beSigned( const Bureaucrat & b )
 {
 	if (this->_signed)
 	{ return ; }
 	if (this->_s_grade < b.getGrade() )
 	{
-		throw( Form::GradeTooLowException() );
+		throw( AForm::GradeTooLowException() );
 	}
 	this->_signed = true ;
 }
 
-const std::string & Form::getName( void ) const 
+const std::string & AForm::getName( void ) const 
 {
 	return this->_name ;
 }
-int Form::getExecGrade( void ) const 
+int AForm::getExecGrade( void ) const 
 {
 	return this->_e_grade ;
 }
-int Form::getSignGrade( void ) const 
+int AForm::getSignGrade( void ) const 
 {
 	return this->_s_grade ;
 }
-bool Form::isSigned( void ) const 
+bool AForm::isSigned( void ) const 
 {
 	return this->_signed ;
 }
-const std::string Form::canonizeme( void ) const
+void AForm::setSigned(bool state)
+{
+	this->_signed = state ;
+}
+const std::string AForm::canonizeme( void ) const
 {
 	std::stringstream _str_ ;
-	_str_ << "Form " << _name << "[exec=" << _e_grade << ", sign="<< _s_grade <<"] is " ;
+	_str_ << "AForm " << _name << " [exec=" << _e_grade << ", sign="<< _s_grade <<"] is " ;
 	if ( _signed ){ _str_ << "SIGNED." ;} else { _str_ << "NOT SIGNED." ;}
 	return _str_.str() ;
 	
 }
-std::ostream & operator<<(std::ostream & os, const Form & obj)
+std::ostream & operator<<(std::ostream & os, const AForm & obj)
 {
 	os << COLORForm << obj.canonizeme()  << RESETForm << std::endl;
 	return os ;
 }
-Form::GradeException::GradeException( void ) : 
+AForm::GradeException::GradeException( void ) : 
 	_adjective( "" ), _limit( 0 ), _text() 
 {
 	std::stringstream ss;
-	ss << this->_adjective << " Form grade is Grade= " << this->_limit << "." ;
+	ss << this->_adjective << " AForm grade is Grade= " << this->_limit << "." ;
 	this->_text = ss.str() ;
 }
-Form::GradeException::GradeException( const std::string & adj, const int lim ) : 
+AForm::GradeException::GradeException( const std::string & adj, const int lim ) : 
 	_adjective( adj ), _limit( lim ), _text() 
 {
-	std::cout << COLORFormGradeE << "Form::GradeException list  constructor called." << RESETForm << std::endl;
+	std::cout << COLORFormGradeE << "AForm::GradeException list  constructor called." << RESETForm << std::endl;
 	std::stringstream ss;
-	ss << this->_adjective << " Form grade is Grade= " << this->_limit << "." ;
+	ss << this->_adjective << " AForm grade is Grade= " << this->_limit << "." ;
 	this->_text = ss.str() ;
 }
-Form::GradeException::GradeException( const GradeException & other ) :
+AForm::GradeException::GradeException( const GradeException & other ) :
 	_adjective(other._adjective), _limit( other._limit), _text( other._text)
 {
-	std::cout << COLORFormGradeE << "Form::GradeException copy constructor called." << RESETForm << std::endl;
+	std::cout << COLORFormGradeE << "AForm::GradeException copy constructor called." << RESETForm << std::endl;
 }
-Form::GradeException & Form::GradeException::operator=(const GradeException & other) 
+AForm::GradeException & AForm::GradeException::operator=(const GradeException & other) 
 {
-	std::cout << COLORFormGradeE << "Form::GradeException Assignation constructor called." << RESETForm << std::endl;
+	std::cout << COLORFormGradeE << "AForm::GradeException Assignation constructor called." << RESETForm << std::endl;
 	(void)other;
 	return *this;
 }
-Form::GradeException::~GradeException ( void ) throw () 
+AForm::GradeException::~GradeException ( void ) throw () 
 {
-	std::cout << COLORFormGradeE << "Form::GradeException destructor called." << RESETForm << std::endl;
+	std::cout << COLORFormGradeE << "AForm::GradeException destructor called." << RESETForm << std::endl;
 }
-const char * Form::GradeException::what() const throw ()
+const char * AForm::GradeException::what() const throw ()
 {
 	return this->_text.c_str();
 }
@@ -121,43 +129,43 @@ const char * Form::GradeException::what() const throw ()
 
 // GradeTooLowException
   
-Form::GradeTooLowException::GradeTooLowException(void) : GradeException("Minimum", 150)
+AForm::GradeTooLowException::GradeTooLowException(void) : GradeException("Minimum", 150)
 {
-	std::cout << COLORFormGradeTLE << "Form::GradeTooLowException default  constructor called." << RESETForm << std::endl;
+	std::cout << COLORFormGradeTLE << "AForm::GradeTooLowException default  constructor called." << RESETForm << std::endl;
 }
-Form::GradeTooLowException::GradeTooLowException( const GradeTooLowException & other) : GradeException( other )
+AForm::GradeTooLowException::GradeTooLowException( const GradeTooLowException & other) : GradeException( other )
 {
-	std::cout << COLORFormGradeTLE << "Form::GradeTooLowException copy  constructor called." << RESETForm << std::endl;
+	std::cout << COLORFormGradeTLE << "AForm::GradeTooLowException copy  constructor called." << RESETForm << std::endl;
 }
-Form::GradeTooLowException & Form::GradeTooLowException::operator=( const GradeTooLowException & other )
+AForm::GradeTooLowException & AForm::GradeTooLowException::operator=( const GradeTooLowException & other )
 {
-	std::cout << COLORFormGradeTLE << "Form::GradeTooLowException Assignation  constructor called." << RESETForm << std::endl;
+	std::cout << COLORFormGradeTLE << "AForm::GradeTooLowException Assignation  constructor called." << RESETForm << std::endl;
 	if (this != &other)
 		GradeException::operator=(other) ;
 	return *this ; 
 }
-Form::GradeTooLowException::~GradeTooLowException( void ) throw()
+AForm::GradeTooLowException::~GradeTooLowException( void ) throw()
 {
-	std::cout << COLORFormGradeTLE << "Form::GradeTooLowException destructor called." << RESETForm << std::endl;
+	std::cout << COLORFormGradeTLE << "AForm::GradeTooLowException destructor called." << RESETForm << std::endl;
 }
 // GradeTooHighException
   
-Form::GradeTooHighException::GradeTooHighException(void) : GradeException("Minimum", 150)
+AForm::GradeTooHighException::GradeTooHighException(void) : GradeException("Minimum", 150)
 {
-	std::cout << COLORFormGradeTLE << "Form::GradeTooHighException default  constructor called." << RESETForm << std::endl;
+	std::cout << COLORFormGradeTLE << "AForm::GradeTooHighException default  constructor called." << RESETForm << std::endl;
 }
-Form::GradeTooHighException::GradeTooHighException( const GradeTooHighException & other) : GradeException( other )
+AForm::GradeTooHighException::GradeTooHighException( const GradeTooHighException & other) : GradeException( other )
 {
-	std::cout << COLORFormGradeTLE << "Form::GradeTooHighException copy  constructor called." << RESETForm << std::endl;
+	std::cout << COLORFormGradeTLE << "AForm::GradeTooHighException copy  constructor called." << RESETForm << std::endl;
 }
-Form::GradeTooHighException & Form::GradeTooHighException::operator=( const GradeTooHighException & other )
+AForm::GradeTooHighException & AForm::GradeTooHighException::operator=( const GradeTooHighException & other )
 {
-	std::cout << COLORFormGradeTLE << "Form::GradeTooHighException Assignation  constructor called." << RESETForm << std::endl;
+	std::cout << COLORFormGradeTLE << "AForm::GradeTooHighException Assignation  constructor called." << RESETForm << std::endl;
 	if (this != &other)
 		GradeException::operator=(other) ;
 	return *this ; 
 }
-Form::GradeTooHighException::~GradeTooHighException( void ) throw()
+AForm::GradeTooHighException::~GradeTooHighException( void ) throw()
 {
-	std::cout << COLORFormGradeTLE << "Form::GradeTooHighException destructor called." << RESETForm << std::endl;
+	std::cout << COLORFormGradeTLE << "AForm::GradeTooHighException destructor called." << RESETForm << std::endl;
 }

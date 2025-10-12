@@ -34,13 +34,13 @@ class AForm
 
 	public:
 		AForm( void ) ;
-		~AForm ( void ) ;
+		virtual ~AForm ( void ) ;
 		AForm( const AForm & other ) ;
 		AForm & operator=( const AForm & other ) ;
 
 		AForm (const std::string & thename, const int & e, const int & s) ;
 		void beSigned( const Bureaucrat & b ) ;
-		void execute( const Bureaucrat & b ) = 0 ;
+		virtual void execute( const Bureaucrat & b ) const = 0 ;
 		const std::string canonizeme ( void ) const ;
 		class GradeException :public std::exception
 		{ 
@@ -78,6 +78,8 @@ class AForm
 		int getExecGrade( void ) const ;
 		int getSignGrade( void ) const ;
 		bool isSigned( void ) const ;
+		// setters
+		void setSigned( bool state) ;
 
 };
 

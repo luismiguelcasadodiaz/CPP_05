@@ -1,5 +1,5 @@
 #include "Bureaucrat.hpp"
-#include "Form.hpp"
+#include "AForm.hpp"
 
 //
 // ::::::::::::::::::::::::::::Canonical form::::::::::::::::::::::::::::::::
@@ -77,12 +77,12 @@ void Bureaucrat::downGrade(){
 	else { throw GradeTooLowException() ;}	
 }
 
-void Bureaucrat::signForm( Form & f)
+void Bureaucrat::signForm( AForm & f)
 {
 	if ( f.isSigned() )
 	{
 		std::cout << this->_name << " couldn't sign " << f.getName() ;
-		std::cout << "Because it is already signed." <<std::endl ;
+		std::cout << " Because it is already signed." <<std::endl ;
 		return ;
 	}
 	int form_grade = f.getSignGrade() ;
@@ -90,7 +90,7 @@ void Bureaucrat::signForm( Form & f)
 	if ( form_grade < bure_grade )
 	{
 		std::cout << this->_name << " couldn't sign " << f.getName() ;
-		std::cout << "Because my grade " << bure_grade << "can not sign " ;
+		std::cout << " Because my grade " << bure_grade << " can not sign " ;
 		std::cout << "forms of grade " << form_grade << "." <<std::endl ;
 		return ;
 	}
@@ -99,6 +99,25 @@ void Bureaucrat::signForm( Form & f)
 	{
 		std::cout << this->_name << " signed " << f.getName() << "." <<std::endl ;
 	}
+}
+void Bureaucrat::executeForm( AForm & f)
+{
+	if ( !f.isSigned() )
+	{
+		std::cout << this->_name << " couldn't execute " << f.getName() ;
+		std::cout << "Because it is not signed." <<std::endl ;
+		this->signForm( f ) ;
+	}
+	int form_grade = f.getExecGrade() ;
+	int bure_grade = this->getGrade() ;
+	if ( form_grade < bure_grade )
+	{
+		std::cout << this->_name << " couldn't execute " << f.getName() ;
+		std::cout << "Because my grade " << bure_grade << "can not sign " ;
+		std::cout << "forms of grade " << form_grade << "." <<std::endl ;
+		return ;
+	}
+	f.execute( *this ) ;
 }
 // protected  member functions
 

@@ -21,7 +21,7 @@
 # include <iostream>
 # include <string>
 # include <sstream>
-class Form ; // Forward declaration
+class AForm ; // Forward declaration
 class Bureaucrat {
 	private:
 		static const int _highest = 1 ;
@@ -92,7 +92,8 @@ class Bureaucrat {
 		// Public member functions
 		void upGrade() ;
 		void downGrade();
-		void signForm( Form & f );
+		void signForm( AForm & f );
+		void executeForm( AForm & f );
 
 		// Helper functions for canonicalization
 		std::string canonizeme( void ) const;

@@ -1,0 +1,655 @@
+#include "Bureaucrat.hpp"
+#include "AForm.hpp"
+#include "PresidentialPardonForm.hpp"
+#include <iostream>
+#include <string>
+
+void printTestHeader(const std::string& testName) {
+    std::cout << "\n========================================\n";
+    std::cout << "TEST: " << testName << "\n";
+    std::cout << "========================================\n";
+}
+
+void printSeparator() {
+    std::cout << "----------------------------------------\n";
+}
+
+// ============================================================================
+// CONSTRUCTOR TESTS
+// ============================================================================
+
+void testPresidentialPardonFormConstructorValid() {
+    printTestHeader("PresidentialPardonForm Valid Constructor");
+    
+    try {
+        PresidentialPardonForm f1("Arthur Dent");
+        std::cout << "✓ Created form with target: Arthur Dent" << std::endl;
+        std::cout << "  Name: " << f1.getName() << std::endl;
+        std::cout << "  Sign grade: " << f1.getSignGrade() << " (expected: 25)" << std::endl;
+        std::cout << "  Exec grade: " << f1.getExecGrade() << " (expected: 5)" << std::endl;
+        std::cout << "  Signed: " << (f1.isSigned() ? "YES" : "NO") << " (expected: NO)" << std::endl;
+        
+        bool pass = (f1.getName() == "PresidentialPardonForm" &&
+                     f1.getSignGrade() == 25 &&
+                     f1.getExecGrade() == 5 &&
+                     !f1.isSigned());
+        std::cout << (pass ? "✓ PASS" : "✗ FAIL") << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "✗ Unexpected exception: " << e.what() << std::endl;
+    }
+}
+
+void testPresidentialPardonFormMultipleTargets() {
+    printTestHeader("PresidentialPardonForm Multiple Targets");
+    
+    try {
+        PresidentialPardonForm f1("Alice");
+        PresidentialPardonForm f2("Bob");
+        PresidentialPardonForm f3("Charlie");
+        
+        std::cout << "✓ Created 3 forms with different targets" << std::endl;
+        std::cout << "  Form 1: " << f1.getName() << std::endl;
+        std::cout << "  Form 2: " << f2.getName() << std::endl;
+        std::cout << "  Form 3: " << f3.getName() << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "✗ Unexpected exception: " << e.what() << std::endl;
+    }
+}
+
+// ============================================================================
+// COPY CONSTRUCTOR AND ASSIGNMENT TESTS
+// ============================================================================
+
+void testPresidentialPardonFormCopyConstructor() {
+    printTestHeader("PresidentialPardonForm Copy Constructor");
+    
+    try {
+        PresidentialPardonForm f1("Original Target");
+        Bureaucrat b("Signer", 20);
+        f1.beSigned(b);
+        
+        PresidentialPardonForm f2(f1);
+        
+        std::cout << "Original form:" << std::endl;
+        std::cout << "  Name: " << f1.getName() << std::endl;
+        std::cout << "  Signed: " << (f1.isSigned() ? "YES" : "NO") << std::endl;
+        
+        std::cout << "Copied form:" << std::endl;
+        std::cout << "  Name: " << f2.getName() << std::endl;
+        std::cout << "  Signed: " << (f2.isSigned() ? "YES" : "NO") << std::endl;
+        
+        std::cout << "Names match: " << (f1.getName() == f2.getName() ? "✓" : "✗") << std::endl;
+        std::cout << "Sign grades match: " << (f1.getSignGrade() == f2.getSignGrade() ? "✓" : "✗") << std::endl;
+        std::cout << "Exec grades match: " << (f1.getExecGrade() == f2.getExecGrade() ? "✓" : "✗") << std::endl;
+        std::cout << "Signed status matches: " << (f1.isSigned() == f2.isSigned() ? "✓" : "✗") << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "✗ Exception: " << e.what() << std::endl;
+    }
+}
+
+void testPresidentialPardonFormAssignmentOperator() {
+    printTestHeader("PresidentialPardonForm Assignment Operator");
+    
+    try {
+        PresidentialPardonForm f1("Target A");
+        PresidentialPardonForm f2("Target B");
+        Bureaucrat b("Signer", 20);
+        
+        f1.beSigned(b);
+        
+        std::cout << "Before assignment:" << std::endl;
+        std::cout << "  f1 signed: " << (f1.isSigned() ? "YES" : "NO") << std::endl;
+        std::cout << "  f2 signed: " << (f2.isSigned() ? "YES" : "NO") << std::endl;
+        
+        f2 = f1;
+        
+        std::cout << "After assignment (f2 = f1):" << std::endl;
+        std::cout << "  f1 signed: " << (f1.isSigned() ? "YES" : "NO") << std::endl;
+        std::cout << "  f2 signed: " << (f2.isSigned() ? "YES" : "NO") << std::endl;
+        std::cout << "Signed status transferred: " << (f1.isSigned() == f2.isSigned() ? "✓" : "✗") << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "✗ Exception: " << e.what() << std::endl;
+    }
+}
+
+// ============================================================================
+// SIGNING TESTS
+// ============================================================================
+
+void testPresidentialPardonFormSignSuccess() {
+    printTestHeader("PresidentialPardonForm Sign - Success Cases");
+    
+    // Test 1: Grade 25 (exact requirement)
+    try {
+        std::cout << "Test 1: Bureaucrat grade 25 (exact requirement)" << std::endl;
+        Bureaucrat b1("Alice", 25);
+        PresidentialPardonForm f1("Target1");
+        
+        std::cout << "  Before: " << (f1.isSigned() ? "SIGNED" : "NOT SIGNED") << std::endl;
+        f1.beSigned(b1);
+        std::cout << "  After: " << (f1.isSigned() ? "SIGNED ✓" : "NOT SIGNED ✗") << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  ✗ Exception: " << e.what() << std::endl;
+    }
+    
+    printSeparator();
+    
+    // Test 2: Grade 1 (highest, should work)
+    try {
+        std::cout << "Test 2: Bureaucrat grade 1 (highest)" << std::endl;
+        Bureaucrat b2("Boss", 1);
+        PresidentialPardonForm f2("Target2");
+        
+        std::cout << "  Before: " << (f2.isSigned() ? "SIGNED" : "NOT SIGNED") << std::endl;
+        f2.beSigned(b2);
+        std::cout << "  After: " << (f2.isSigned() ? "SIGNED ✓" : "NOT SIGNED ✗") << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  ✗ Exception: " << e.what() << std::endl;
+    }
+    
+    printSeparator();
+    
+    // Test 3: Grade 10 (well above requirement)
+    try {
+        std::cout << "Test 3: Bureaucrat grade 10 (well above requirement)" << std::endl;
+        Bureaucrat b3("Manager", 10);
+        PresidentialPardonForm f3("Target3");
+        
+        std::cout << "  Before: " << (f3.isSigned() ? "SIGNED" : "NOT SIGNED") << std::endl;
+        f3.beSigned(b3);
+        std::cout << "  After: " << (f3.isSigned() ? "SIGNED ✓" : "NOT SIGNED ✗") << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  ✗ Exception: " << e.what() << std::endl;
+    }
+}
+
+void testPresidentialPardonFormSignFailure() {
+    printTestHeader("PresidentialPardonForm Sign - Failure Cases");
+    
+    // Test 1: Grade 26 (too low by 1)
+    try {
+        std::cout << "Test 1: Bureaucrat grade 26 (too low by 1)" << std::endl;
+        Bureaucrat b1("LowGrade", 26);
+        PresidentialPardonForm f1("Target1");
+        
+        std::cout << "  Bureaucrat grade: " << b1.getGrade() << std::endl;
+        std::cout << "  Required sign grade: " << f1.getSignGrade() << std::endl;
+        
+        f1.beSigned(b1);
+        std::cout << "  ✗ Should have thrown exception!" << std::endl;
+    } catch (AForm::GradeTooLowException& e) {
+        std::cout << "  ✓ Caught expected exception: " << e.what() << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  ? Caught different exception: " << e.what() << std::endl;
+    }
+    
+    printSeparator();
+    
+    // Test 2: Grade 150 (lowest possible)
+    try {
+        std::cout << "Test 2: Bureaucrat grade 150 (lowest possible)" << std::endl;
+        Bureaucrat b2("VeryLowGrade", 150);
+        PresidentialPardonForm f2("Target2");
+        
+        std::cout << "  Bureaucrat grade: " << b2.getGrade() << std::endl;
+        std::cout << "  Required sign grade: " << f2.getSignGrade() << std::endl;
+        
+        f2.beSigned(b2);
+        std::cout << "  ✗ Should have thrown exception!" << std::endl;
+    } catch (AForm::GradeTooLowException& e) {
+        std::cout << "  ✓ Caught expected exception: " << e.what() << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  ? Caught exception: " << e.what() << std::endl;
+    }
+    
+    printSeparator();
+    
+    // Test 3: Grade 50 (way too low)
+    try {
+        std::cout << "Test 3: Bureaucrat grade 50 (way too low)" << std::endl;
+        Bureaucrat b3("MidGrade", 50);
+        PresidentialPardonForm f3("Target3");
+        
+        std::cout << "  Bureaucrat grade: " << b3.getGrade() << std::endl;
+        std::cout << "  Required sign grade: " << f3.getSignGrade() << std::endl;
+        
+        f3.beSigned(b3);
+        std::cout << "  ✗ Should have thrown exception!" << std::endl;
+    } catch (AForm::GradeTooLowException& e) {
+        std::cout << "  ✓ Caught expected exception: " << e.what() << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  ? Caught exception: " << e.what() << std::endl;
+    }
+}
+
+void testPresidentialPardonFormBureaucratSignForm() {
+    printTestHeader("PresidentialPardonForm Using Bureaucrat::signForm()");
+    
+    // Test 1: Successful sign
+    try {
+        std::cout << "Test 1: Successful sign through Bureaucrat method" << std::endl;
+        Bureaucrat b1("Alice", 20);
+        PresidentialPardonForm f1("Target1");
+        
+        b1.signForm(f1);
+        std::cout << "  Result: " << (f1.isSigned() ? "SIGNED ✓" : "NOT SIGNED ✗") << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  Exception: " << e.what() << std::endl;
+    }
+    
+    printSeparator();
+    
+    // Test 2: Failed sign
+    try {
+        std::cout << "Test 2: Failed sign through Bureaucrat method (grade too low)" << std::endl;
+        Bureaucrat b2("Bob", 30);
+        PresidentialPardonForm f2("Target2");
+        
+        b2.signForm(f2);
+        std::cout << "  Result: " << (f2.isSigned() ? "SIGNED" : "NOT SIGNED ✓") << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  Exception: " << e.what() << std::endl;
+    }
+    
+    printSeparator();
+    
+    // Test 3: Already signed
+    try {
+        std::cout << "Test 3: Try to sign already signed form" << std::endl;
+        Bureaucrat b3a("Charlie", 20);
+        Bureaucrat b3b("Dave", 15);
+        PresidentialPardonForm f3("Target3");
+        
+        b3a.signForm(f3);
+        std::cout << "  First sign: " << (f3.isSigned() ? "SIGNED ✓" : "NOT SIGNED") << std::endl;
+        
+        b3b.signForm(f3);
+        std::cout << "  Second sign attempt: Form remains signed" << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  Exception: " << e.what() << std::endl;
+    }
+}
+
+// ============================================================================
+// EXECUTION TESTS
+// ============================================================================
+
+void testPresidentialPardonFormExecuteSuccess() {
+    printTestHeader("PresidentialPardonForm Execute - Success Cases");
+    
+    // Test 1: Grade 5 (exact requirement)
+    try {
+        std::cout << "Test 1: Execute with grade 5 (exact requirement)" << std::endl;
+        Bureaucrat signer("Signer", 20);
+        Bureaucrat executor("Executor", 5);
+        PresidentialPardonForm f1("Arthur Dent");
+        
+        f1.beSigned(signer);
+        std::cout << "  Form signed: " << (f1.isSigned() ? "YES" : "NO") << std::endl;
+        std::cout << "  Executing..." << std::endl;
+        f1.execute(executor);
+        std::cout << "  ✓ Execution successful" << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  ✗ Exception: " << e.what() << std::endl;
+    }
+    
+    printSeparator();
+    
+    // Test 2: Grade 1 (highest)
+    try {
+        std::cout << "Test 2: Execute with grade 1 (highest)" << std::endl;
+        Bureaucrat signer("Signer", 20);
+        Bureaucrat executor("BigBoss", 1);
+        PresidentialPardonForm f2("Ford Prefect");
+        
+        f2.beSigned(signer);
+        std::cout << "  Form signed: " << (f2.isSigned() ? "YES" : "NO") << std::endl;
+        std::cout << "  Executing..." << std::endl;
+        f2.execute(executor);
+        std::cout << "  ✓ Execution successful" << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  ✗ Exception: " << e.what() << std::endl;
+    }
+    
+    printSeparator();
+    
+    // Test 3: Grade 3 (above requirement)
+    try {
+        std::cout << "Test 3: Execute with grade 3 (above requirement)" << std::endl;
+        Bureaucrat signer("Signer", 20);
+        Bureaucrat executor("Manager", 3);
+        PresidentialPardonForm f3("Trillian");
+        
+        f3.beSigned(signer);
+        std::cout << "  Form signed: " << (f3.isSigned() ? "YES" : "NO") << std::endl;
+        std::cout << "  Executing..." << std::endl;
+        f3.execute(executor);
+        std::cout << "  ✓ Execution successful" << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  ✗ Exception: " << e.what() << std::endl;
+    }
+}
+
+void testPresidentialPardonFormExecuteFailure() {
+    printTestHeader("PresidentialPardonForm Execute - Failure Cases");
+    
+    // Test 1: Form not signed
+    try {
+        std::cout << "Test 1: Execute unsigned form" << std::endl;
+        Bureaucrat executor("Executor", 1);
+        PresidentialPardonForm f1("Target1");
+        
+        std::cout << "  Form signed: " << (f1.isSigned() ? "YES" : "NO") << std::endl;
+        std::cout << "  Attempting execution..." << std::endl;
+        f1.execute(executor);
+        std::cout << "  ✗ Should have thrown exception!" << std::endl;
+    } catch (AForm::GradeTooLowException& e) {
+        std::cout << "  ✓ Caught exception: " << e.what() << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  ? Caught exception: " << e.what() << std::endl;
+    }
+    
+    printSeparator();
+    
+    // Test 2: Grade 6 (too low by 1)
+    try {
+        std::cout << "Test 2: Execute with grade 6 (too low by 1)" << std::endl;
+        Bureaucrat signer("Signer", 20);
+        Bureaucrat executor("LowGrade", 6);
+        PresidentialPardonForm f2("Target2");
+        
+        f2.beSigned(signer);
+        std::cout << "  Form signed: " << (f2.isSigned() ? "YES" : "NO") << std::endl;
+        std::cout << "  Bureaucrat grade: " << executor.getGrade() << std::endl;
+        std::cout << "  Required exec grade: " << f2.getExecGrade() << std::endl;
+        std::cout << "  Attempting execution..." << std::endl;
+        f2.execute(executor);
+        std::cout << "  ✗ Should have thrown exception!" << std::endl;
+    } catch (AForm::GradeTooLowException& e) {
+        std::cout << "  ✓ Caught expected exception: " << e.what() << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  ? Caught exception: " << e.what() << std::endl;
+    }
+    
+    printSeparator();
+    
+    // Test 3: Grade 150 (lowest)
+    try {
+        std::cout << "Test 3: Execute with grade 150 (lowest)" << std::endl;
+        Bureaucrat signer("Signer", 20);
+        Bureaucrat executor("VeryLowGrade", 150);
+        PresidentialPardonForm f3("Target3");
+        
+        f3.beSigned(signer);
+        std::cout << "  Form signed: " << (f3.isSigned() ? "YES" : "NO") << std::endl;
+        std::cout << "  Bureaucrat grade: " << executor.getGrade() << std::endl;
+        std::cout << "  Required exec grade: " << f3.getExecGrade() << std::endl;
+        std::cout << "  Attempting execution..." << std::endl;
+        f3.execute(executor);
+        std::cout << "  ✗ Should have thrown exception!" << std::endl;
+    } catch (AForm::GradeTooLowException& e) {
+        std::cout << "  ✓ Caught expected exception: " << e.what() << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  ? Caught exception: " << e.what() << std::endl;
+    }
+    
+    printSeparator();
+    
+    // Test 4: Grade 25 (can sign but not execute)
+    try {
+        std::cout << "Test 4: Grade 25 (can sign but not execute)" << std::endl;
+        Bureaucrat bureaucrat("MidGrade", 25);
+        PresidentialPardonForm f4("Target4");
+        
+        f4.beSigned(bureaucrat);
+        std::cout << "  Form signed: " << (f4.isSigned() ? "YES ✓" : "NO") << std::endl;
+        std::cout << "  Same bureaucrat trying to execute..." << std::endl;
+        f4.execute(bureaucrat);
+        std::cout << "  ✗ Should have thrown exception!" << std::endl;
+    } catch (AForm::GradeTooLowException& e) {
+        std::cout << "  ✓ Caught expected exception: " << e.what() << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  ? Caught exception: " << e.what() << std::endl;
+    }
+}
+
+void testPresidentialPardonFormBureaucratExecuteForm() {
+    printTestHeader("PresidentialPardonForm Using Bureaucrat::executeForm()");
+    
+    // Test 1: Successful execution
+    try {
+        std::cout << "Test 1: Successful execution through Bureaucrat method" << std::endl;
+        Bureaucrat signer("Signer", 20);
+        Bureaucrat executor("Executor", 3);
+        PresidentialPardonForm f1("Zaphod Beeblebrox");
+        
+        signer.signForm(f1);
+        executor.executeForm(f1);
+        std::cout << "  ✓ Execution successful" << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  Exception: " << e.what() << std::endl;
+    }
+    
+    printSeparator();
+    
+    // Test 2: Failed execution (not signed)
+    try {
+        std::cout << "Test 2: Failed execution (form not signed)" << std::endl;
+        Bureaucrat executor("Executor", 1);
+        PresidentialPardonForm f2("Target");
+        
+        executor.executeForm(f2);
+    } catch (std::exception& e) {
+        std::cout << "  Exception: " << e.what() << std::endl;
+    }
+    
+    printSeparator();
+    
+    // Test 3: Failed execution (grade too low)
+    try {
+        std::cout << "Test 3: Failed execution (grade too low)" << std::endl;
+        Bureaucrat signer("Signer", 20);
+        Bureaucrat executor("LowExecutor", 10);
+        PresidentialPardonForm f3("Target");
+        
+        signer.signForm(f3);
+        executor.executeForm(f3);
+    } catch (std::exception& e) {
+        std::cout << "  Exception: " << e.what() << std::endl;
+    }
+}
+
+// ============================================================================
+// POLYMORPHISM TESTS
+// ============================================================================
+
+void testPresidentialPardonFormPolymorphism() {
+    printTestHeader("PresidentialPardonForm Polymorphism Test");
+    
+    try {
+        std::cout << "Test: Using AForm pointer to PresidentialPardonForm" << std::endl;
+        
+        AForm* form = new PresidentialPardonForm("Marvin");
+        
+        std::cout << "  Form name: " << form->getName() << std::endl;
+        std::cout << "  Sign grade: " << form->getSignGrade() << std::endl;
+        std::cout << "  Exec grade: " << form->getExecGrade() << std::endl;
+        
+        Bureaucrat signer("Signer", 20);
+        Bureaucrat executor("Executor", 3);
+        
+        form->beSigned(signer);
+        std::cout << "  Form signed: " << (form->isSigned() ? "YES ✓" : "NO") << std::endl;
+        
+        form->execute(executor);
+        std::cout << "  ✓ Polymorphic execution successful" << std::endl;
+        
+        delete form;
+        std::cout << "  ✓ Polymorphic deletion successful" << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  Exception: " << e.what() << std::endl;
+    }
+}
+
+void testPresidentialPardonFormArrayOfForms() {
+    printTestHeader("PresidentialPardonForm Array of Forms");
+    
+    try {
+        std::cout << "Creating array of 3 forms..." << std::endl;
+        
+        AForm* forms[3];
+        forms[0] = new PresidentialPardonForm("Target A");
+        forms[1] = new PresidentialPardonForm("Target B");
+        forms[2] = new PresidentialPardonForm("Target C");
+        
+        Bureaucrat signer("Signer", 20);
+        Bureaucrat executor("Executor", 2);
+        
+        std::cout << "\nSigning and executing all forms:" << std::endl;
+        for (int i = 0; i < 3; i++) {
+            std::cout << "\n  Form " << i << ":" << std::endl;
+            std::cout << "    Name: " << forms[i]->getName() << std::endl;
+            
+            forms[i]->beSigned(signer);
+            std::cout << "    Signed: " << (forms[i]->isSigned() ? "YES" : "NO") << std::endl;
+            
+            forms[i]->execute(executor);
+            std::cout << "    Executed successfully ✓" << std::endl;
+        }
+        
+        std::cout << "\nDeleting all forms..." << std::endl;
+        for (int i = 0; i < 3; i++) {
+            delete forms[i];
+        }
+        std::cout << "  ✓ All forms deleted successfully" << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  Exception: " << e.what() << std::endl;
+    }
+}
+
+// ============================================================================
+// EDGE CASES AND STRESS TESTS
+// ============================================================================
+
+void testPresidentialPardonFormEdgeCases() {
+    printTestHeader("PresidentialPardonForm Edge Cases");
+    
+    // Test 1: Empty target name
+    try {
+        std::cout << "Test 1: Empty target name" << std::endl;
+        PresidentialPardonForm f1("");
+        std::cout << "  ✓ Created form with empty target" << std::endl;
+        
+        Bureaucrat signer("Signer", 20);
+        Bureaucrat executor("Executor", 3);
+        f1.beSigned(signer);
+        f1.execute(executor);
+        std::cout << "  ✓ Execution with empty target successful" << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  Exception: " << e.what() << std::endl;
+    }
+    
+    printSeparator();
+    
+    // Test 2: Very long target name
+    try {
+        std::cout << "Test 2: Very long target name" << std::endl;
+        std::string longName = "ThisIsAVeryLongTargetNameThatGoesOnAndOnAndOnAndOnAndOnForAVeryLongTime";
+        PresidentialPardonForm f2(longName);
+        std::cout << "  ✓ Created form with long target (" << longName.length() << " chars)" << std::endl;
+        
+        Bureaucrat signer("Signer", 20);
+        Bureaucrat executor("Executor", 3);
+        f2.beSigned(signer);
+        f2.execute(executor);
+        std::cout << "  ✓ Execution successful" << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  Exception: " << e.what() << std::endl;
+    }
+    
+    printSeparator();
+    
+    // Test 3: Special characters in target
+    try {
+        std::cout << "Test 3: Special characters in target" << std::endl;
+        PresidentialPardonForm f3("Target@#$%^&*()");
+        std::cout << "  ✓ Created form with special characters" << std::endl;
+        
+        Bureaucrat signer("Signer", 20);
+        Bureaucrat executor("Executor", 3);
+        f3.beSigned(signer);
+        f3.execute(executor);
+        std::cout << "  ✓ Execution successful" << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "  Exception: " << e.what() << std::endl;
+    }
+}
+
+void testPresidentialPardonFormMultipleExecutions() {
+    printTestHeader("PresidentialPardonForm Multiple Executions");
+    
+    try {
+        std::cout << "Executing same form multiple times..." << std::endl;
+        
+        Bureaucrat signer("Signer", 20);
+        Bureaucrat executor("Executor", 3);
+        PresidentialPardonForm f("Target");
+        
+        f.beSigned(signer);
+        std::cout << "\nExecution 1:" << std::endl;
+        f.execute(executor);
+        
+        std::cout << "\nExecution 2:" << std::endl;
+        f.execute(executor);
+        
+        std::cout << "\nExecution 3:" << std::endl;
+        f.execute(executor);
+        
+        std::cout << "\n✓ Multiple executions successful" << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "Exception: " << e.what() << std::endl;
+    }
+}
+
+// ============================================================================
+// MAIN TEST RUNNER
+// ============================================================================
+
+int main(void)
+{
+    std::cout << "\n╔════════════════════════════════════════════════════╗\n";
+    std::cout << "║  PRESIDENTIALPARDONFORM EXHAUSTIVE TESTING        ║\n";
+    std::cout << "╚════════════════════════════════════════════════════╝\n";
+    
+    // Constructor tests
+    testPresidentialPardonFormConstructorValid();
+    testPresidentialPardonFormMultipleTargets();
+    
+    // Copy and assignment tests
+    testPresidentialPardonFormCopyConstructor();
+    testPresidentialPardonFormAssignmentOperator();
+    
+    // Signing tests
+    testPresidentialPardonFormSignSuccess();
+    testPresidentialPardonFormSignFailure();
+    testPresidentialPardonFormBureaucratSignForm();
+    
+    // Execution tests
+    testPresidentialPardonFormExecuteSuccess();
+    testPresidentialPardonFormExecuteFailure();
+    testPresidentialPardonFormBureaucratExecuteForm();
+    
+    // Polymorphism tests
+    testPresidentialPardonFormPolymorphism();
+    testPresidentialPardonFormArrayOfForms();
+    
+    // Edge cases and stress tests
+    testPresidentialPardonFormEdgeCases();
+    testPresidentialPardonFormMultipleExecutions();
+    
+    std::cout << "\n╔════════════════════════════════════════════════════╗\n";
+    std::cout << "║           ALL TESTS COMPLETED!                     ║\n";
+    std::cout << "╚════════════════════════════════════════════════════╝\n\n";
+    
+    return 0;
+}
