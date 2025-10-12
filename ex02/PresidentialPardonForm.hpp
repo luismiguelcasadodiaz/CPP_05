@@ -30,7 +30,7 @@ class PresidentialPardonForm : public AForm
 		PresidentialPardonForm( std::string thetarget) ;
 		PresidentialPardonForm & operator=(const PresidentialPardonForm & other);
 		PresidentialPardonForm (const PresidentialPardonForm & other);
-		void execute( const Bureaucrat & b) const ;
+		void execute( const Bureaucrat & b) ;
 		const std::string & getTarget( void ) const ;
 
 	private:

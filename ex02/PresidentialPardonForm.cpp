@@ -27,7 +27,7 @@ PresidentialPardonForm & PresidentialPardonForm::operator=( const PresidentialPa
 	}
 	return *this ;
 }
-void PresidentialPardonForm::execute( const Bureaucrat & b) const
+void PresidentialPardonForm::execute( const Bureaucrat & b) 
 {
 	int b_grade = b.getGrade() ;
 	int f_grade = this->getExecGrade() ;

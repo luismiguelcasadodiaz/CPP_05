@@ -59,7 +59,7 @@ void RobotomyRequestForm::execute( const Bureaucrat & b)
 	{
 		std::cout << _target << " robotomization failed." ;
 	}
-	std::cout << std::endl ;
+	std::cout << RESETForm << std::endl ;
 	this->_executions++ ;
 }
 RobotomyRequestForm::~RobotomyRequestForm ( void )

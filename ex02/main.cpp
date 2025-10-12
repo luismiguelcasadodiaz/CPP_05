@@ -1,16 +1,33 @@
 #include "Bureaucrat.hpp"
 #include "PresidentialPardonForm.hpp"
 #include "RobotomyRequestForm.hpp"
+#include "ShrubberyCreationForm.hpp"
 #include <iostream>
 #include <string>
 #include <stdexcept>
-
+void lineapuntos()
+{   //                         1         2         3         4 
+	//                1234567890123456789012345678901234567890
+		std::cout << "----------------------------------------" ;
+		std::cout << "----------------------------------------" << std::endl;
+}
+void titulo(const std::string & texto) 
+{
+	lineapuntos() ;
+	//                1234567890123456789012345678901234567890
+		std::cout << "                                        " ;
+		std::cout << texto << std::endl;
+	lineapuntos() ;
+}
 
 int main(void)
 {
+	titulo("creation of  Bureaucrats");
+
 	Bureaucrat b001("Alice", 1) ;
 	Bureaucrat b020("Bob 020", 20) ;
 	Bureaucrat b025("Peter 025", 25) ;
+	titulo("PresidentialPardon");
 	try
 	{
 		PresidentialPardonForm ppf023("Miguel") ; 
@@ -35,12 +52,16 @@ int main(void)
 		std::cout << "Exception =>" << e.what() << std::endl;
 	}
 
+	titulo("Robotomies");
 	try
 	{
 		RobotomyRequestForm rrf023("Miguel") ; 
 		RobotomyRequestForm rrf024("Carlos") ; 
 		b025.signForm(rrf023);
+		for (int i = 0; i < 10; i++)
+		{
 		b025.executeForm(rrf023) ;
+		}
 		b025.executeForm(rrf024);
 		b025.signForm(rrf024);
 		b025.executeForm(rrf024);
@@ -54,6 +75,33 @@ int main(void)
 		b020.executeForm(rrf024);
 		b020.signForm(rrf024);
 		b020.executeForm(rrf024);
+	} catch (std::exception &e)
+	{
+		std::cout << "Exception =>" << e.what() << std::endl;
+	}
+	titulo("Shrubberies");
+	try
+	{
+		ShrubberyCreationForm scf023("Miguel") ; 
+		ShrubberyCreationForm scf024("Carlos") ; 
+		b025.signForm(scf023);
+		for (int i = 0; i < 10; i++)
+		{
+		b025.executeForm(scf023) ;
+		}
+		b025.executeForm(scf024);
+		b025.signForm(scf024);
+		b025.executeForm(scf024);
+		b001.signForm(scf023);
+		b001.executeForm(scf023) ;
+		b001.executeForm(scf024);
+		b001.signForm(scf024);
+		b001.executeForm(scf024);
+		b020.signForm(scf023);
+		b020.executeForm(scf023) ;
+		b020.executeForm(scf024);
+		b020.signForm(scf024);
+		b020.executeForm(scf024);
 	} catch (std::exception &e)
 	{
 		std::cout << "Exception =>" << e.what() << std::endl;

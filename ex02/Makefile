@@ -6,7 +6,7 @@
 #    By: luicasad <luicasad@student.42barcel>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/30 13:07:33 by luicasad          #+#    #+#              #
-#    Updated: 2025/10/12 20:50:26 by luicasad         ###   ########.fr        #
+#    Updated: 2025/10/12 23:39:00 by luicasad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,12 +52,14 @@ LFLGS 			= #-fsanitize=address
 HEADERS		=	Bureaucrat.hpp \
 				AForm.hpp \
 				PresidentialPardonForm.hpp \
+				ShrubberyCreationForm.hpp \
 				RobotomyRequestForm.hpp
 
 SRCS_TARGET	= 	main.cpp \
 			Bureaucrat.cpp \
 			AForm.cpp \
 			PresidentialPardonForm.cpp \
+			ShrubberyCreationForm.cpp \
 			RobotomyRequestForm.cpp
 
 

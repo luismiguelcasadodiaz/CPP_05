@@ -40,7 +40,7 @@ class AForm
 
 		AForm (const std::string & thename, const int & e, const int & s) ;
 		void beSigned( const Bureaucrat & b ) ;
-		virtual void execute( const Bureaucrat & b ) const = 0 ;
+		virtual void execute( const Bureaucrat & b ) = 0 ;
 		const std::string canonizeme ( void ) const ;
 
 		// Base Exception for Form operational exceptions
