@@ -1,5 +1,17 @@
 #include "ShrubberyCreationForm.hpp"
 
+const std::string ShrubberyCreationForm::_tree =  "       *\n"
+												  "      /|\\\n"
+												  "     /*|o\\\n"
+												  "    /o*@*o\\\n"
+												  "   /*o@*@o*\\\n"
+												  "  /o*@o*o@*o\\\n"
+												  " /*@o*@o@*o@*\\\n"
+												  "/o*@o*@o@*o@*o\\\n"
+												  "      |||\n"
+												  "      |||\n"
+												  "\n" 
+												  "   Shruberry\n";
 ShrubberyCreationForm::ShrubberyCreationForm ( void ) : 
 	AForm("ShrubberyCreationForm", 45, 72),
 	_target("no target"),
@@ -48,18 +60,45 @@ void ShrubberyCreationForm::execute( const Bureaucrat & b)
 												this->_target,
 												f_grade,
 												b_grade) );
+		return ;
 	}
-	std::cout << COLORShrubb << "Robotomy drilling noise. " ;
-	if ((this->_executions % 2 ) == 0 )
+	
+    std::string directory = "."; // Current directory
+								 //
+	if ( (access(directory.c_str(), W_OK) != 0) )
 	{
-		std::cout << _target << " has been robotomized sucessfully." ;
+        std::cout << COLORShrubb << "[ERROR] No write permission on current " ;
+        std::cout << "directory! Error: " ;
+		std::cout << std::strerror(errno) << RESETForm << std::endl;
+        return ;
 	}
-	else
+
+	std::string filename = this->_target + "_shrubbery" ;
+    std::ifstream file(filename.c_str());
+    if ( file.good() )
 	{
-		std::cout << _target << " robotomization failed." ;
+        std::cout << COLORShrubb << "Form executed previously. A shruberry " ;
+		std::cout << "exists at " << this->_target << "." << RESETForm << std::endl;
+        return ;
 	}
-	std::cout << RESETForm << std::endl ;
-	this->_executions++ ;
+    std::ofstream outFile(filename.c_str(), std::ios::out | std::ios::trunc);
+    if (!outFile.is_open()) {
+        std::cout << COLORShrubb << "[ERROR] Failed to open file for writing!";
+        std::cout << " Error: " << std::strerror(errno) << RESETForm << std::endl;
+        return ;
+    }
+    outFile << ShrubberyCreationForm::_tree;
+    
+    // Check if write operation succeeded
+    if (outFile.fail()) 
+	{
+        std::cout << COLORShrubb << "[ERROR] Failed to write to  file!";
+        std::cout << " Error: " << std::strerror(errno) << RESETForm << std::endl;
+        return ;
+    }
+    
+    outFile.close();
+
 }
 ShrubberyCreationForm::~ShrubberyCreationForm ( void )
 {

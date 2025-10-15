@@ -2,6 +2,15 @@
 # define ShrubberyCreationForm_HH
 
 #include "AForm.hpp"
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <cstdio>
+#include <cerrno>
+#include <cstring>
+#include <sys/stat.h>
+#include <sys/statvfs.h>
+#include <unistd.h>
 
 # define RESETForm  	"\033[0;39m"
 //# define COLORForm		"\033[0;90m"             //GRAY
@@ -37,6 +46,7 @@ class ShrubberyCreationForm : public AForm
 		std::string _target ;
 		int _executions;
 		ShrubberyCreationForm( void ) ;
+		static const std::string _tree ;
 } ;
 
 #endif
