@@ -1,0 +1,363 @@
+#include <string>
+#include "AForm.hpp"
+
+
+// ============================================================================
+// EXHAUSTIVE TEST SUITE
+// ============================================================================
+
+#include "Intern.hpp"
+#include "Bureaucrat.hpp"
+#include <iostream>
+#include <iomanip>
+
+void printTestHeader(const std::string& testName) {
+    std::cout << "\n" << std::string(70, '=') << std::endl;
+    std::cout << "TEST: " << testName << std::endl;
+    std::cout << std::string(70, '=') << std::endl;
+}
+
+void printSubTest(const std::string& subTest) {
+    std::cout << "\n--- " << subTest << " ---" << std::endl;
+}
+
+void testBasicConstruction() {
+    printTestHeader("Basic Construction and Destruction");
+    
+    printSubTest("Default Constructor");
+    Intern* intern1 = new Intern();
+    
+    printSubTest("Copy Constructor");
+    Intern* intern2 = new Intern(*intern1);
+    
+    printSubTest("Assignment Operator");
+    Intern intern3;
+    intern3 = *intern1;
+    
+    printSubTest("Destruction");
+    delete intern1;
+    delete intern2;
+    std::cout << "Stack intern about to be destroyed:" << std::endl;
+}
+
+void testAllValidForms() {
+    printTestHeader("All Valid Form Creation");
+    
+    Intern intern;
+    AForm* form;
+    
+    printSubTest("1. Shrubbery Creation Form");
+    form = intern.makeForm("shrubbery creation", "Home");
+    if (form) {
+        std::cout << *form << std::endl;
+        delete form;
+    }
+    
+    printSubTest("2. Robotomy Request Form");
+    form = intern.makeForm("robotomy request", "Bender");
+    if (form) {
+        std::cout << *form << std::endl;
+        delete form;
+    }
+    
+    printSubTest("3. Presidential Pardon Form");
+    form = intern.makeForm("presidential pardon", "Arthur Dent");
+    if (form) {
+        std::cout << *form << std::endl;
+        delete form;
+    }
+}
+
+void testInvalidForms() {
+    printTestHeader("Invalid Form Names");
+    
+    Intern intern;
+    AForm* form;
+    
+    printSubTest("Completely Wrong Name");
+    form = intern.makeForm("coffee request", "Me");
+    if (!form) std::cout << "✓ Correctly returned NULL" << std::endl;
+    
+    printSubTest("Empty String");
+    form = intern.makeForm("", "Target");
+    if (!form) std::cout << "✓ Correctly returned NULL" << std::endl;
+    
+    printSubTest("Case Sensitive Test (wrong case)");
+    form = intern.makeForm("Robotomy Request", "Bender");
+    if (!form) std::cout << "✓ Correctly returned NULL (case matters)" << std::endl;
+    
+    printSubTest("Partial Name");
+    form = intern.makeForm("robotomy", "Bender");
+    if (!form) std::cout << "✓ Correctly returned NULL" << std::endl;
+    
+    printSubTest("Extra Spaces");
+    form = intern.makeForm(" robotomy request ", "Bender");
+    if (!form) std::cout << "✓ Correctly returned NULL (exact match required)" << std::endl;
+    
+    printSubTest("Typo in Name");
+    form = intern.makeForm("robotomy requets", "Bender");
+    if (!form) std::cout << "✓ Correctly returned NULL" << std::endl;
+}
+
+void testEdgeCaseTargets() {
+    printTestHeader("Edge Case Targets");
+    
+    Intern intern;
+    AForm* form;
+    
+    printSubTest("Empty Target String");
+    form = intern.makeForm("robotomy request", "");
+    if (form) {
+        std::cout << *form << std::endl;
+        std::cout << "✓ Form created with empty target" << std::endl;
+        delete form;
+    }
+    
+    printSubTest("Very Long Target String");
+    std::string longTarget(1000, 'X');
+    form = intern.makeForm("robotomy request", longTarget);
+    if (form) {
+        std::cout << "✓ Form created with very long target (1000 chars)" << std::endl;
+        delete form;
+    }
+    
+    printSubTest("Target with Special Characters");
+    form = intern.makeForm("robotomy request", "Target-123_@#$%");
+    if (form) {
+        std::cout << *form << std::endl;
+        std::cout << "✓ Form created with special characters" << std::endl;
+        delete form;
+    }
+    
+    printSubTest("Target with Newlines");
+    form = intern.makeForm("robotomy request", "Target\nWith\nNewlines");
+    if (form) {
+        std::cout << *form << std::endl;
+        std::cout << "✓ Form created with newlines" << std::endl;
+        delete form;
+    }
+}
+
+void testMultipleCreations() {
+    printTestHeader("Multiple Form Creations");
+    
+    Intern intern;
+    AForm* forms[10];
+    
+    printSubTest("Creating 10 forms sequentially");
+    for (int i = 0; i < 10; i++) {
+        std::cout << "\nCreation #" << (i + 1) << ": ";
+        forms[i] = intern.makeForm("robotomy request", "Target");
+    }
+    
+    printSubTest("Cleaning up all forms");
+    for (int i = 0; i < 10; i++) {
+        if (forms[i]) {
+            delete forms[i];
+            std::cout << "✓ Form " << (i + 1) << " deleted" << std::endl;
+        }
+    }
+}
+
+void testIntegrationWithBureaucrat() {
+    printTestHeader("Integration with Bureaucrat System");
+    
+    Intern intern;
+    
+    printSubTest("High-grade Bureaucrat signs and executes");
+    try {
+        Bureaucrat alice("Alice", 1);
+        AForm* form = intern.makeForm("presidential pardon", "Criminal");
+        if (form) {
+            std::cout << "\nBefore signing:\n" << *form << std::endl;
+            alice.signForm(*form);
+            std::cout << "\nAfter signing:\n" << *form << std::endl;
+            alice.executeForm(*form);
+            delete form;
+        }
+    } catch (std::exception& e) {
+        std::cout << "Exception: " << e.what() << std::endl;
+    }
+    
+    printSubTest("Low-grade Bureaucrat cannot sign");
+    try {
+        Bureaucrat bob("Bob", 150);
+        AForm* form = intern.makeForm("shrubbery creation", "Garden");
+        if (form) {
+            std::cout << "\nBob (grade 150) tries to sign:\n" << std::endl;
+            bob.signForm(*form);
+            delete form;
+        }
+    } catch (std::exception& e) {
+        std::cout << "Exception caught: " << e.what() << std::endl;
+    }
+    
+    printSubTest("Mid-grade Bureaucrat - partial permissions");
+    try {
+        Bureaucrat charlie("Charlie", 50);
+        AForm* form1 = intern.makeForm("shrubbery creation", "Park");
+        AForm* form2 = intern.makeForm("presidential pardon", "Prisoner");
+        
+        if (form1) {
+            std::cout << "\nCharlie can sign shrubbery (requires 145):" << std::endl;
+            charlie.signForm(*form1);
+            charlie.executeForm(*form1);
+            delete form1;
+        }
+        
+        if (form2) {
+            std::cout << "\nCharlie cannot sign presidential pardon (requires 25):" << std::endl;
+            charlie.signForm(*form2);
+            delete form2;
+        }
+    } catch (std::exception& e) {
+        std::cout << "Exception: " << e.what() << std::endl;
+    }
+}
+
+void testMemoryManagement() {
+    printTestHeader("Memory Management and Leaks");
+    
+    printSubTest("Create and immediately delete");
+    Intern intern;
+    for (int i = 0; i < 5; i++) {
+        AForm* form = intern.makeForm("robotomy request", "Target");
+        if (form) {
+            delete form;
+            std::cout << "✓ Form " << (i + 1) << " created and deleted" << std::endl;
+        }
+    }
+    
+    printSubTest("Create invalid form (should not leak)");
+    for (int i = 0; i < 5; i++) {
+        AForm* form = intern.makeForm("invalid form", "Target");
+        if (form) {
+            delete form;
+        } else {
+            std::cout << "✓ No form created (iteration " << (i + 1) << ")" << std::endl;
+        }
+    }
+    
+    printSubTest("Mixed valid and invalid");
+    std::string formNames[] = {
+        "robotomy request",
+        "invalid form",
+        "shrubbery creation",
+        "another invalid",
+        "presidential pardon"
+    };
+    
+    for (int i = 0; i < 5; i++) {
+        AForm* form = intern.makeForm(formNames[i], "Target");
+        if (form) {
+            std::cout << "✓ Valid form created and deleted" << std::endl;
+            delete form;
+        }
+    }
+}
+
+void testMultipleInterns() {
+    printTestHeader("Multiple Intern Instances");
+    
+    printSubTest("Two interns creating forms independently");
+    Intern intern1;
+    Intern intern2;
+    
+    AForm* form1 = intern1.makeForm("robotomy request", "Target1");
+    AForm* form2 = intern2.makeForm("shrubbery creation", "Target2");
+    
+    if (form1 && form2) {
+        std::cout << "\nIntern 1's form:\n" << *form1 << std::endl;
+        std::cout << "\nIntern 2's form:\n" << *form2 << std::endl;
+        std::cout << "✓ Both interns working independently" << std::endl;
+        delete form1;
+        delete form2;
+    }
+}
+
+void testFormNameVariations() {
+    printTestHeader("Form Name Variations and Boundaries");
+    
+    Intern intern;
+    
+    printSubTest("Exact matches (should work)");
+    std::string validNames[] = {
+        "shrubbery creation",
+        "robotomy request",
+        "presidential pardon"
+    };
+    
+    for (int i = 0; i < 3; i++) {
+        AForm* form = intern.makeForm(validNames[i], "Target");
+        if (form) {
+            std::cout << "✓ \"" << validNames[i] << "\" works" << std::endl;
+            delete form;
+        }
+    }
+    
+    printSubTest("Near-misses (should fail)");
+    std::string invalidNames[] = {
+        "shrubbery",
+        "robotomy",
+        "presidential",
+        "shrubbery creation form",
+        "the robotomy request",
+        "presidential pardon form"
+    };
+    
+    for (int i = 0; i < 6; i++) {
+        AForm* form = intern.makeForm(invalidNames[i], "Target");
+        if (!form) {
+            std::cout << "✓ \"" << invalidNames[i] << "\" correctly rejected" << std::endl;
+        }
+    }
+}
+
+void testStressTest() {
+    printTestHeader("Stress Test - Rapid Creation/Deletion");
+    
+    Intern intern;
+    const int iterations = 100;
+    int successCount = 0;
+    
+    printSubTest("Creating and deleting 100 forms");
+    for (int i = 0; i < iterations; i++) {
+        std::string formNames[] = {"shrubbery creation", "robotomy request", "presidential pardon"};
+        AForm* form = intern.makeForm(formNames[i % 3], "Target");
+        if (form) {
+            successCount++;
+            delete form;
+        }
+    }
+    
+    std::cout << "✓ Successfully created and deleted " << successCount 
+              << "/" << iterations << " forms" << std::endl;
+}
+
+int main() {
+    std::cout << "\n";
+    std::cout << "╔════════════════════════════════════════════════════════════════════╗\n";
+    std::cout << "║          EXHAUSTIVE INTERN CLASS TEST SUITE                       ║\n";
+    std::cout << "╚════════════════════════════════════════════════════════════════════╝\n";
+    
+    // Run all tests
+    testBasicConstruction();
+    testAllValidForms();
+    testInvalidForms();
+    testEdgeCaseTargets();
+    testMultipleCreations();
+    testIntegrationWithBureaucrat();
+    testMemoryManagement();
+    testMultipleInterns();
+    testFormNameVariations();
+    testStressTest();
+    
+    std::cout << "\n";
+    std::cout << "╔════════════════════════════════════════════════════════════════════╗\n";
+    std::cout << "║          ALL TESTS COMPLETED                                       ║\n";
+    std::cout << "╚════════════════════════════════════════════════════════════════════╝\n";
+    std::cout << "\nNote: Run with valgrind to verify no memory leaks:\n";
+    std::cout << "valgrind --leak-check=full ./intern_test\n\n";
+    
+    return 0;
+}
