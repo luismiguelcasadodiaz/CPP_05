@@ -1,6 +1,6 @@
 # CPP_05
 
-This academic exercise teach about Exceptions
+This scholarly exercise provides insight into exception handling.
 
 I successfully completed CPP04 nine months ago; thus, I daresay this exercise marks a near renewal of my journey in learning C++.
 
